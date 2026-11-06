@@ -3,17 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="المنصة الشخصية المعتمدة لأبو ساهر الشافعي - خبيـر الإدارة والتطوير المؤسسي والتخطيط الاستراتيجي.">
-    <meta name="author" content="أبو ساهر الشافعي">
-    <meta name="keywords" content="أبو ساهر الشافعي, الشافعي, التخطيط الاستراتيجي, القيادة, التطوير المؤسسي">
-    
-    <!-- Open Graph for Social Media Sharing -->
-    <meta property="og:title" content="أبو ساهر الشافعي | المنصة الشخصية ولوحة التحكم">
-    <meta property="og:description" content="موقع وتطبيقات أبو ساهر الشافعي في الإدارة والاستشارات والتطوير المؤسسي.">
-    <meta property="og:type" content="website">
-
     <title>أبو ساهر الشافعي | المنصة الشخصية ولوحة التحكم</title>
-    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -21,9 +11,6 @@
     <!-- Google Fonts Arabic (Cairo & Tajawal) -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     
-    <!-- External Custom CSS -->
-    <link rel="stylesheet" href="style.css">
-
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -50,8 +37,167 @@
             }
         }
     </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: #080f1e;
+            color: #f1f5f9;
+            overflow-x: hidden;
+            transition: background-color 0.4s ease, color 0.4s ease;
+        }
+
+        /* Light Mode Custom Styling Adjustments */
+        body.light {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        body.light .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.25);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        body.light .text-slate-100,
+        body.light .text-slate-200,
+        body.light .text-slate-300 {
+            color: #1e293b;
+        }
+
+        body.light .text-slate-400,
+        body.light .text-slate-500 {
+            color: #64748b;
+        }
+
+        body.light .bg-slate-950,
+        body.light .bg-slate-900,
+        body.light .bg-navyDark {
+            background-color: #ffffff;
+            color: #0f172a;
+        }
+
+        body.light .border-slate-800,
+        body.light .border-slate-700 {
+            border-color: #e2e8f0;
+        }
+
+        body.light input,
+        body.light textarea,
+        body.light select {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+        
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #ffe07d 0%, #d4af37 50%, #94721c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .gold-border-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .gold-glow-hover:hover {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4);
+            border-color: rgba(212, 175, 55, 0.7);
+        }
+
+        .glass-panel {
+            background: rgba(13, 22, 41, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 3px;
+        }
+    </style>
 </head>
 <body class="bg-navyDark text-slate-100 min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-black custom-scrollbar">
+
+    <!-- Firebase Integration Module -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase state container
+        window.fbState = {
+            app: null,
+            db: null,
+            auth: null,
+            currentUser: null,
+            isAuthReady: false
+        };
+
+        // Initialize Firebase safely
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'abu-sahir-app';
+        let firebaseConfig = null;
+
+        try {
+            if (typeof __firebase_config !== 'undefined') {
+                firebaseConfig = JSON.parse(__firebase_config);
+            }
+        } catch (e) {
+            console.warn("Firebase config parse error, fallback to local mode:", e);
+        }
+
+        if (firebaseConfig) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                const db = getFirestore(app);
+                const auth = getAuth(app);
+
+                window.fbState.app = app;
+                window.fbState.db = db;
+                window.fbState.auth = auth;
+
+                // Authentication setup
+                const initAuth = async () => {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (err) {
+                        console.error("Auth init error:", err);
+                    }
+                };
+
+                initAuth();
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        window.fbState.currentUser = user;
+                        window.fbState.isAuthReady = true;
+                        document.dispatchEvent(new CustomEvent('firebaseAuthSuccess', { detail: user }));
+                    } else {
+                        window.fbState.currentUser = null;
+                        window.fbState.isAuthReady = true;
+                    }
+                });
+
+            } catch (err) {
+                console.error("Firebase init failed:", err);
+            }
+        } else {
+            console.log("Running in offline local persistence mode.");
+        }
+    </script>
 
     <!-- Top Navigation Header -->
     <header class="sticky top-0 z-40 glass-panel border-b border-gold-500/20 px-4 lg:px-8 py-3 transition-all duration-300">
@@ -59,8 +205,8 @@
             <!-- Brand Logo -->
             <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="switchTab('home')">
                 <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-gold-700 via-gold-500 to-amber-200 p-[2px] shadow-lg">
-                    <div class="w-full h-full bg-navyDark rounded-full flex items-center justify-center font-bold text-gold-500 text-xl font-tajawal overflow-hidden">
-                        <img src="assets/avatar.png" alt="أبو ساهر الشافعي" class="w-full h-full object-cover" onerror="this.remove(); this.parentElement.innerText='أ';">
+                    <div class="w-full h-full bg-navyDark rounded-full flex items-center justify-center font-bold text-gold-500 text-xl font-tajawal">
+                        أ
                     </div>
                 </div>
                 <div>
@@ -88,8 +234,9 @@
                 </button>
             </nav>
 
-            <!-- Actions -->
+            <!-- User Auth Profile Actions -->
             <div class="flex items-center gap-3">
+                <!-- Theme Toggle Switch Button -->
                 <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-full bg-slate-900/80 border border-gold-500/30 text-gold-500 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center w-10 h-10 shadow-md" title="تبديل المظهر">
                     <i id="themeToggleIcon" class="fa-solid fa-sun text-lg"></i>
                 </button>
@@ -111,7 +258,7 @@
             </div>
         </div>
 
-        <!-- Mobile Navigation Menu -->
+        <!-- Mobile Navigation Menu Dropdown -->
         <div id="mobileMenu" class="hidden md:hidden mt-3 pt-3 border-t border-slate-800 space-y-2">
             <button onclick="switchTab('home')" class="w-full text-right px-4 py-2.5 rounded-lg text-slate-200 hover:bg-gold-500/10 hover:text-gold-500 font-semibold flex items-center gap-2">
                 <i class="fa-solid fa-house w-6 text-gold-500"></i> الرئيسية
@@ -131,9 +278,13 @@
     <!-- Main Content Container -->
     <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-grow w-full">
 
-        <!-- SECTION 1: HOME -->
+        <!-- SECTION 1: HOME (Hero & Overview) -->
         <section id="section-home" class="tab-section space-y-12">
+            <!-- Hero Banner -->
             <div class="relative overflow-hidden rounded-3xl glass-panel p-8 lg:p-14 gold-border-glow flex flex-col lg:flex-row items-center justify-between gap-10">
+                <div class="absolute -top-24 -right-24 w-72 h-72 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
                 <div class="space-y-6 max-w-2xl relative z-10 text-center lg:text-right">
                     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-500 text-xs font-bold">
                         <i class="fa-solid fa-crown text-xs"></i>
@@ -159,32 +310,132 @@
                     </div>
                 </div>
 
+                <!-- Hero Profile Visual Avatar -->
                 <div class="relative group">
                     <div class="w-64 h-64 lg:w-80 lg:h-80 rounded-3xl bg-gradient-to-tr from-gold-600 via-amber-500 to-emerald-600 p-1.5 shadow-2xl transform group-hover:rotate-1 transition-all duration-500">
                         <div class="w-full h-full bg-slate-950 rounded-[22px] overflow-hidden relative flex flex-col items-center justify-center p-6 text-center">
-                            <img src="assets/profile-hero.jpg" alt="صورة أبو ساهر الشافعي" class="absolute inset-0 w-full h-full object-cover opacity-30" onerror="this.style.display='none';">
-                            <div class="w-28 h-28 rounded-full bg-slate-900 border-2 border-gold-500 flex items-center justify-center text-6xl text-gold-500 mb-4 shadow-inner relative z-10">
+                            <div class="w-28 h-28 rounded-full bg-slate-900 border-2 border-gold-500 flex items-center justify-center text-6xl text-gold-500 mb-4 shadow-inner">
                                 <i class="fa-solid fa-user-shield"></i>
                             </div>
-                            <h3 class="text-2xl font-bold font-tajawal text-slate-100 relative z-10">أبو ساهر الشافعي</h3>
-                            <p class="text-gold-500 text-xs font-semibold mt-1 relative z-10">قيادي & مستشار تطوير أعمال</p>
+                            <h3 class="text-2xl font-bold font-tajawal text-slate-100">أبو ساهر الشافعي</h3>
+                            <p class="text-gold-500 text-xs font-semibold mt-1">قيادي & مستشار تطوير أعمال</p>
+                            <div class="mt-4 flex gap-2">
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-[10px] text-slate-300 border border-slate-700">التخطيط الاستراتيجي</span>
+                                <span class="px-2.5 py-1 bg-slate-800 rounded-lg text-[10px] text-slate-300 border border-slate-700">إدارة الأزمات</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Highlights Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-gold-500/40 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-gold-500/10 text-gold-500 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-tajawal mb-2">رؤية المستقبل</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">تقديم استشارات متقدمة وابتكار حلول مستدامة تضمن التطور المستمر والريادة في مختلف المجالات.</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-gold-500/40 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-tajawal mb-2">الإنجازات والنتائج</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">خبرة طويلة في إدارة المشاريع الناجحة وتحقيق الأهداف الاستراتيجية بدقة وكفاءة عالية.</p>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl border border-slate-800 hover:border-gold-500/40 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-users-gear"></i>
+                    </div>
+                    <h3 class="text-xl font-bold font-tajawal mb-2">التواصل والدعم</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">فتح آفاق جديدة للتعاون والشراكات المثمرة مع النخب والرواد في السوق.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: BIO & EXPERTISE -->
+        <section id="section-bio" class="tab-section hidden space-y-8">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <h2 class="text-3xl font-black font-tajawal gold-gradient-text">السيرة الذاتية والخبرات</h2>
+                <p class="text-slate-400 text-sm mt-2">مسيرة حافلة بالسعي نحو التميز والعطاء المستمر</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Profile Summary Card -->
+                <div class="glass-panel p-6 rounded-2xl border border-gold-500/20 text-center flex flex-col items-center">
+                    <div class="w-32 h-32 rounded-full bg-slate-900 border-2 border-gold-500 p-1 relative mb-4">
+                        <div class="w-full h-full rounded-full bg-slate-800 flex items-center justify-center text-5xl text-gold-500">
+                            <i class="fa-solid fa-user-graduate"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-100 font-tajawal">أبو ساهر الشافعي</h3>
+                    <p class="text-gold-500 text-sm font-semibold mb-4">خبير الإدارة والتطوير المؤسسي</p>
+                    
+                    <div class="w-full border-t border-slate-800 pt-4 space-y-3 text-right text-xs text-slate-300">
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">التخصص:</span>
+                            <span class="font-bold">إدارة الأعمال والتخطيط</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">البريد الإلكتروني:</span>
+                            <span class="font-bold dir-ltr">abu.sahir@elshafei.com</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">الموقع:</span>
+                            <span class="font-bold">الشرق الأوسط</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-slate-500">الحالة:</span>
+                            <span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle text-[8px] ml-1"></i>متاح للاستشارات</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline & Experience -->
+                <div class="lg:col-span-2 glass-panel p-8 rounded-2xl border border-slate-800 space-y-6">
+                    <h3 class="text-2xl font-bold font-tajawal text-gold-500 border-b border-slate-800 pb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase"></i> المحطات المهنية والخبرات
+                    </h3>
+
+                    <div class="space-y-6 relative border-r-2 border-gold-500/30 pr-6 mr-2">
+                        <!-- Experience Item 1 -->
+                        <div class="relative">
+                            <div class="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-gold-500 border-4 border-navyDark"></div>
+                            <span class="text-xs font-bold text-gold-500 bg-gold-500/10 px-2.5 py-1 rounded-md border border-gold-500/20">2020 - الحاضر</span>
+                            <h4 class="text-lg font-bold text-slate-100 mt-2">مستشار عام وتخطيط استراتيجي</h4>
+                            <p class="text-slate-400 text-sm mt-1 leading-relaxed">
+                                الإشراف على هيكلة المؤسسات وتقديم التوجيه الاستراتيجي لصنّاع القرار، بهدف رفع الكفاءة التشغيلية وتحقيق استدامة النمو.
+                            </p>
+                        </div>
+
+                        <!-- Experience Item 2 -->
+                        <div class="relative">
+                            <div class="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-600 border-4 border-navyDark"></div>
+                            <span class="text-xs font-bold text-slate-400 bg-slate-800 px-2.5 py-1 rounded-md">2015 - 2020</span>
+                            <h4 class="text-lg font-bold text-slate-100 mt-2">مدير إدارة مشاريع كبرى</h4>
+                            <p class="text-slate-400 text-sm mt-1 leading-relaxed">
+                                قيادة فرق العمل متعددة التخصصات لتنفيذ مشاريع ضخمة وفق أعلى معايير الجودة والتوقيتات المحددة.
+                            </p>
+                        </div>
+
+                        <!-- Experience Item 3 -->
+                        <div class="relative">
+                            <div class="absolute -right-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-600 border-4 border-navyDark"></div>
+                            <span class="text-xs font-bold text-slate-400 bg-slate-800 px-2.5 py-1 rounded-md">2010 - 2015</span>
+                            <h4 class="text-lg font-bold text-slate-100 mt-2">أخصائي التطوير المؤسسي والجودة</h4>
+                            <p class="text-slate-400 text-sm mt-1 leading-relaxed">
+                                تطوير نظم إدارة الأداء وصياغة لوائح العمل وتحديث بيئة الأعمال وفق النظم الحديثة.
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION 2: BIO -->
-        <section id="section-bio" class="tab-section hidden space-y-8">
-            <div class="text-center max-w-2xl mx-auto mb-8">
-                <h2 class="text-3xl font-black font-tajawal gold-gradient-text">السيرة الذاتية والخبرات</h2>
-            </div>
-            <div id="bioContentContainer" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Bio loaded via script.js -->
-            </div>
-        </section>
-
-        <!-- SECTION 3: ARTICLES -->
+        <!-- SECTION 3: ARTICLES & POSTS -->
         <section id="section-articles" class="tab-section hidden space-y-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-6">
                 <div>
@@ -195,22 +446,28 @@
                     <i class="fa-solid fa-pen-to-square"></i> إضافة مقال جديد
                 </button>
             </div>
-            <div id="articlesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+            <!-- Articles Grid Container -->
+            <div id="articlesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Articles loaded via JavaScript -->
+            </div>
         </section>
 
-        <!-- SECTION 4: DASHBOARD (ADMIN DASHBOARD WITH FULL CRUD) -->
+        <!-- SECTION 4: DASHBOARD (PERSONAL PRIVATE CONTROL) -->
         <section id="section-dashboard" class="tab-section hidden space-y-8">
+            <!-- Security Gate Panel (Shown when Admin is locked out) -->
             <div id="dashSecurityGate" class="glass-panel p-8 rounded-3xl border border-gold-500/30 max-w-xl mx-auto text-center space-y-6 shadow-2xl my-12">
                 <div class="w-20 h-20 rounded-full bg-gold-500/10 text-gold-500 border border-gold-500/30 flex items-center justify-center text-3xl mx-auto shadow-inner">
                     <i class="fa-solid fa-shield-halved"></i>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-black font-tajawal text-slate-100">منطقة المشرف المحمية</h3>
+                    <h3 class="text-2xl font-black font-tajawal text-slate-100">منطقة المشرف المغلقة</h3>
                     <p class="text-slate-400 text-sm mt-2">يرجى إدخال كلمة مرور المشرف للوصول إلى لوحة التحكم والتعديل</p>
                 </div>
 
                 <form onsubmit="handleAdminAuth(event)" class="space-y-4 max-w-sm mx-auto text-right">
                     <div>
+                        <label class="block text-xs font-bold text-slate-300 mb-1">كلمة المرور الخاصة</label>
                         <input type="password" id="adminPassGateInput" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none transition-all">
                     </div>
                     <div id="adminAuthError" class="hidden text-xs text-red-400 font-semibold text-center">
@@ -220,47 +477,62 @@
                         <i class="fa-solid fa-key ml-2"></i> تأكيد الهوية والدخول
                     </button>
                 </form>
+                <div class="text-[11px] text-slate-500 border-t border-slate-800 pt-3">
+                    ملاحظة: كلمة المرور الافتراضية الأولى هي <code class="bg-slate-900 px-2 py-0.5 rounded text-gold-500 border border-slate-800 font-mono">123456</code> ويمكنك تغييرها من الإعدادات داخل اللوحة.
+                </div>
             </div>
 
-            <!-- Protected Admin View -->
+            <!-- Dashboard Content Container (Protected View) -->
             <div id="dashProtectedContent" class="hidden space-y-8">
-                <div class="glass-panel p-6 rounded-2xl border border-gold-500/30 flex flex-col md:flex-row items-center justify-between gap-4">
+                <!-- Dashboard Top Greeting Bar -->
+                <div class="glass-panel p-6 rounded-2xl border border-gold-500/30 flex flex-col md:flex-row items-center justify-between gap-4 bg-gradient-to-r from-slate-900 via-navyDark to-slate-900">
                     <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500 to-amber-700 flex items-center justify-center text-2xl text-slate-950 font-black shadow-lg">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-gold-500 to-amber-700 flex items-center justify-center text-2xl text-slate-950 font-black shadow-lg">
                             <i class="fa-solid fa-user-gear"></i>
                         </div>
                         <div>
-                            <h2 class="text-2xl font-bold font-tajawal text-slate-100">لوحة الشافعي لإدارة المحتوى الإداري (CRUD)</h2>
-                            <p class="text-slate-400 text-sm">إمكانية إضافة، تعديل، وحذف المقالات والمهام والخبرات بسهولة.</p>
+                            <h2 class="text-2xl font-bold font-tajawal text-slate-100 flex items-center gap-2">
+                                لوحة التحكم الشخصية
+                                <span class="text-xs font-normal text-gold-500 bg-gold-500/10 px-2.5 py-0.5 rounded-full border border-gold-500/30">خاصة بالقيادة</span>
+                            </h2>
+                            <p id="dashWelcomeUser" class="text-slate-400 text-sm">مرحباً بك يا أبو ساهر. إليك ملخص الأنشطة والمهام اليومية.</p>
                         </div>
                     </div>
+
                     <div class="flex items-center gap-3">
-                        <button onclick="openChangePassModal()" class="px-4 py-2 bg-slate-800 border border-gold-500/30 text-gold-500 font-bold text-xs rounded-xl hover:bg-slate-700 transition-all">
-                            <i class="fa-solid fa-key ml-1"></i> تغيير كلمة المرور
+                        <button onclick="openChangePassModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-gold-500/30 text-gold-500 font-bold text-xs rounded-xl transition-all flex items-center gap-2">
+                            <i class="fa-solid fa-key"></i> تغيير كلمة المرور
                         </button>
-                        <button onclick="lockAdminDashboard()" class="px-3 py-2 bg-red-500/10 text-red-400 border border-red-500/30 font-bold text-xs rounded-xl hover:bg-red-500/20 transition-all">
-                            <i class="fa-solid fa-lock ml-1"></i> قفل
+                        <button onclick="lockAdminDashboard()" class="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 font-bold text-xs rounded-xl transition-all flex items-center gap-1.5" title="قفل اللوحة الخروج">
+                            <i class="fa-solid fa-lock"></i> قفل
                         </button>
                     </div>
                 </div>
 
-                <!-- Admin Tasks & Content Controls -->
+                <!-- Dashboard Modules Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <!-- Tasks Management -->
+                    
+                    <!-- Task Manager Widget -->
                     <div class="lg:col-span-2 glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
                             <h3 class="text-lg font-bold font-tajawal text-gold-500 flex items-center gap-2">
-                                <i class="fa-solid fa-list-check"></i> إدارة المهام والتكليفات
+                                <i class="fa-solid fa-list-check"></i> قائمة المهام والتكليفات
                             </h3>
                             <span id="taskCounter" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg">0 مهام</span>
                         </div>
+
+                        <!-- Add Task Input Form -->
                         <form onsubmit="handleAddTask(event)" class="flex gap-2">
-                            <input type="text" id="newTaskInput" placeholder="أدخل مهمة جديدة..." required class="flex-grow bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
-                            <button type="submit" class="px-5 py-3 bg-gold-500 text-slate-950 font-bold rounded-xl text-sm hover:bg-gold-600 transition-all">
+                            <input type="text" id="newTaskInput" placeholder="أدخل مهمة جديدة..." required class="flex-grow bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none transition-all">
+                            <button type="submit" class="px-5 py-3 bg-gold-500 text-slate-950 font-bold rounded-xl text-sm hover:bg-gold-600 transition-all flex items-center gap-1">
                                 <i class="fa-solid fa-plus"></i> إضافة
                             </button>
                         </form>
-                        <div id="tasksList" class="space-y-2.5 max-h-[350px] overflow-y-auto custom-scrollbar pt-2"></div>
+
+                        <!-- Tasks List Area -->
+                        <div id="tasksList" class="space-y-2.5 max-h-[350px] overflow-y-auto custom-scrollbar pt-2">
+                            <!-- Dynamic Tasks -->
+                        </div>
                     </div>
 
                     <!-- Personal Quick Notes Widget -->
@@ -272,11 +544,12 @@
                                 </h3>
                                 <span class="text-[10px] text-slate-400">حفظ تلقائي</span>
                             </div>
-                            <textarea id="quickNotesArea" oninput="saveQuickNotes()" placeholder="اكتب ملاحظاتك..." class="w-full h-48 bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-200 text-sm rounded-xl p-4 outline-none resize-none custom-scrollbar"></textarea>
+                            <textarea id="quickNotesArea" oninput="saveQuickNotes()" placeholder="اكتب ملاحظاتك وأفكارك الخاصة هنا..." class="w-full h-48 bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-200 text-sm rounded-xl p-4 outline-none resize-none leading-relaxed custom-scrollbar"></textarea>
                         </div>
+
                         <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-800/60">
                             <span id="noteSaveStatus">تخزين آمن</span>
-                            <button onclick="clearQuickNotes()" class="hover:text-red-400">مسح</button>
+                            <button onclick="clearQuickNotes()" class="hover:text-red-400 transition-colors">مسح</button>
                         </div>
                     </div>
                 </div>
@@ -284,29 +557,55 @@
         </section>
     </main>
 
-    <!-- Modals -->
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-slate-800/80 py-6 px-4 mt-12 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p>© <span id="currentYear"></span> جميع الحقوق محفوظة لـ <strong class="text-gold-500 font-bold">أبو ساهر الشافعي</strong></p>
+            <div class="flex gap-4 text-slate-400">
+                <a href="#" class="hover:text-gold-500 transition-colors"><i class="fa-brands fa-twitter text-sm"></i></a>
+                <a href="#" class="hover:text-gold-500 transition-colors"><i class="fa-brands fa-linkedin text-sm"></i></a>
+                <a href="#" class="hover:text-gold-500 transition-colors"><i class="fa-solid fa-envelope text-sm"></i></a>
+            </div>
+        </div>
+    </footer>
+
     <!-- AUTH MODAL -->
     <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-md p-8 rounded-3xl border border-gold-500/30 relative shadow-2xl">
-            <button onclick="toggleAuthModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-2xl font-bold font-tajawal text-slate-100 text-center mb-4">تسجيل الدخول / التوثيق</h3>
+            <button onclick="toggleAuthModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-gold-500/10 text-gold-500 flex items-center justify-center text-2xl mx-auto mb-3 border border-gold-500/30">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-tajawal text-slate-100">تسجيل الدخول / التوثيق</h3>
+                <p class="text-slate-400 text-xs mt-1">سجل اسمك ليتم تخصيص الجلسة باسمك ومزامنة بياناتك</p>
+            </div>
             <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
-                <input type="text" id="authNameInput" required placeholder="أدخل اسمك هنا..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
-                <button type="submit" class="w-full py-3 bg-gold-500 text-slate-950 text-sm font-bold rounded-xl hover:bg-gold-600 transition-all">حفظ ومتابعة</button>
+                <div>
+                    <label class="block text-xs text-slate-300 font-bold mb-1">الاسم الكريم</label>
+                    <input type="text" id="authNameInput" required placeholder="أدخل اسمك هنا..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                </div>
+                <button type="submit" class="w-full py-3 bg-gold-500 text-slate-950 text-sm font-bold rounded-xl hover:bg-gold-600 transition-all shadow-lg">حفظ ومتابعة</button>
             </form>
         </div>
     </div>
 
-    <!-- NEW / EDIT ARTICLE MODAL -->
+    <!-- NEW ARTICLE MODAL -->
     <div id="newPostModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-lg p-8 rounded-3xl border border-gold-500/30 relative shadow-2xl">
-            <button onclick="closeNewPostModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h3 id="modalArticleTitle" class="text-2xl font-bold font-tajawal text-slate-100 text-center mb-4">إضافة / تعديل مقال</h3>
-            <form onsubmit="handleSaveArticle(event)" class="space-y-4">
-                <input type="hidden" id="articleEditId">
+            <button onclick="closeNewPostModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-bold font-tajawal text-slate-100">إضافة مقال أو فكرة جديدة</h3>
+                <p class="text-slate-400 text-xs mt-1">شارِك أفكارك ورؤيتك الاستراتيجية مع الزوار</p>
+            </div>
+            <form onsubmit="handleAddArticle(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs text-slate-300 font-bold mb-1">عنوان المقال</label>
-                    <input type="text" id="articleTitleInput" required placeholder="مثال: التخطيط المستقبلي..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                    <input type="text" id="articleTitleInput" required placeholder="مثال: التخطيط المستقبلي للمؤسسات..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
                 </div>
                 <div>
                     <label class="block text-xs text-slate-300 font-bold mb-1">التصنيف</label>
@@ -314,40 +613,407 @@
                         <option value="التخطيط الاستراتيجي">التخطيط الاستراتيجي</option>
                         <option value="القيادة والإدارة">القيادة والإدارة</option>
                         <option value="تطوير الذات">تطوير الذات</option>
+                        <option value="رؤى عامة">رؤى عامة</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs text-slate-300 font-bold mb-1">المحتوى</label>
-                    <textarea id="articleContentInput" required rows="4" placeholder="اكتب تفاصيل المقال..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl p-4 outline-none resize-none custom-scrollbar"></textarea>
+                    <textarea id="articleContentInput" required rows="4" placeholder="اكتب تفاصيل المقال هنا..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl p-4 outline-none resize-none custom-scrollbar"></textarea>
                 </div>
                 <div class="flex justify-end gap-3 pt-3 border-t border-slate-800">
-                    <button type="button" onclick="closeNewPostModal()" class="px-5 py-2.5 bg-slate-800 text-slate-300 text-sm font-bold rounded-xl">إلغاء</button>
-                    <button type="submit" class="px-6 py-2.5 bg-gold-500 text-slate-950 text-sm font-bold rounded-xl hover:bg-gold-600 transition-all">حفظ المقال</button>
+                    <button type="button" onclick="closeNewPostModal()" class="px-5 py-2.5 bg-slate-800 text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-700">إلغاء</button>
+                    <button type="submit" class="px-6 py-2.5 bg-gold-500 text-slate-950 text-sm font-bold rounded-xl hover:bg-gold-600 transition-all">نشر المقال</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- CHANGE PASS MODAL -->
+    <!-- CHANGE PASSWORD MODAL -->
     <div id="changePassModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="glass-panel w-full max-w-md p-8 rounded-3xl border border-gold-500/30 relative shadow-2xl">
-            <button onclick="closeChangePassModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-2xl font-bold font-tajawal text-slate-100 text-center mb-4">تغيير كلمة المرور</h3>
+            <button onclick="closeChangePassModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-gold-500/10 text-gold-500 flex items-center justify-center text-2xl mx-auto mb-3 border border-gold-500/30">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h3 class="text-2xl font-bold font-tajawal text-slate-100">تغيير كلمة المرور الخاصة</h3>
+                <p class="text-slate-400 text-xs mt-1">تعديل كلمة مرور المشرف للوحة التحكم</p>
+            </div>
             <form onsubmit="handleChangePassword(event)" class="space-y-4">
-                <input type="password" id="oldPassInput" required placeholder="كلمة المرور الحالية" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
-                <input type="password" id="newPassInput" required placeholder="كلمة المرور الجديدة" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                <div>
+                    <label class="block text-xs text-slate-300 font-bold mb-1">كلمة المرور الحالية</label>
+                    <input type="password" id="oldPassInput" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 font-bold mb-1">كلمة المرور الجديدة</label>
+                    <input type="password" id="newPassInput" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                </div>
                 <div id="changePassMsg" class="hidden text-xs text-center font-bold"></div>
-                <button type="submit" class="w-full py-3 bg-gold-500 text-slate-950 font-bold text-sm rounded-xl hover:bg-gold-600">تحديث كلمة المرور</button>
+                <div class="flex justify-end gap-3 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeChangePassModal()" class="px-5 py-2.5 bg-slate-800 text-slate-300 text-sm font-bold rounded-xl hover:bg-slate-700">إلغاء</button>
+                    <button type="submit" class="px-6 py-2.5 bg-gold-500 text-slate-950 text-sm font-bold rounded-xl hover:bg-gold-600 transition-all">حفظ كلمة المرور</button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="glass-panel border-t border-slate-800/80 py-6 px-4 mt-12 text-center text-xs text-slate-400">
-        <p>© <span id="currentYear"></span> جميع الحقوق محفوظة لـ <strong class="text-gold-500 font-bold">أبو ساهر الشافعي</strong></p>
-    </footer>
+    <!-- MAIN JAVASCRIPT APP LOGIC -->
+    <script>
+        // Default Articles Initial Data
+        let articlesData = [
+            {
+                id: 1,
+                title: "استراتيجيات التخطيط في العصر الرقمي",
+                category: "التخطيط الاستراتيجي",
+                date: "2026-03-15",
+                author: "أبو ساهر الشافعي",
+                content: "التخطيط الاستراتيجي لم يعد مجرد خطة خماسية جامدة، بل أصبح عملية مرنة تتأثر بالبيانات وتعتمد على سرعة اتخاذ القرار والتكيف مع المتغيرات المستمرة."
+            },
+            {
+                id: 2,
+                title: "خصائص القائد المؤثر في إدارة الأزمات",
+                category: "القيادة والإدارة",
+                date: "2026-02-28",
+                author: "أبو ساهر الشافعي",
+                content: "القدرة على اتخاذ القرارات الحسمية تحت الضغط، والتواصل الشفاف مع فريق العمل، هي الركائز الأساسية لعبور الأزمات بنجاح وإنجاز."
+            },
+            {
+                id: 3,
+                title: "تطوير الذات واستدامة التعلم المستمر",
+                category: "تطوير الذات",
+                date: "2026-01-10",
+                author: "أبو ساهر الشافعي",
+                content: "استثمار الشخص في مهاراته وقدراته وتغذية معرفته اليومية هو الخيار الوحيد للحفاظ على التنافسية والتميز المهني والشخصي."
+            }
+        ];
 
-    <!-- External Custom JavaScript -->
-    <script src="script.js"></script>
+        // Tasks Initial Data
+        let tasksData = [
+            { id: 1, text: "مراجعة تقرير التخطيط السنوي", completed: false },
+            { id: 2, text: "إعداد جدول اللقاءات الاستشارية", completed: true },
+            { id: 3, text: "صياغة المقال القادم لمدونة الشافعي", completed: false }
+        ];
+
+        // State variables
+        let isAdminLoggedIn = false;
+        let adminPass = localStorage.getItem('abu_sahir_admin_pass') || '123456';
+        let currentUserName = localStorage.getItem('abu_sahir_user_name') || 'أبو ساهر الشافعي';
+
+        // Initialize application on load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            initTheme();
+            updateUserUI();
+            renderArticles();
+            renderTasks();
+            loadQuickNotes();
+
+            // Firebase sync listener if available
+            document.addEventListener('firebaseAuthSuccess', (e) => {
+                console.log("Firebase Auth Active:", e.detail.uid);
+            });
+        });
+
+        // Tab Navigation Switcher
+        function switchTab(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+
+            // Show selected section
+            const target = document.getElementById(`section-${tabId}`);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+
+            // Update nav button active states
+            document.querySelectorAll('.nav-link').forEach(btn => {
+                btn.classList.remove('bg-gold-500', 'text-slate-950', 'shadow-md');
+                btn.classList.add('text-slate-300');
+            });
+
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-gold-500', 'text-slate-950', 'shadow-md');
+                activeBtn.classList.remove('text-slate-300');
+            }
+
+            // Close mobile menu if open
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu) mobileMenu.classList.add('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle Mobile Navigation Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        // Theme Switcher (Dark / Light)
+        function initTheme() {
+            const savedTheme = localStorage.getItem('abu_sahir_theme') || 'dark';
+            if (savedTheme === 'light') {
+                document.body.classList.add('light');
+                document.getElementById('themeToggleIcon').className = 'fa-solid fa-moon text-lg text-slate-800';
+            } else {
+                document.body.classList.remove('light');
+                document.getElementById('themeToggleIcon').className = 'fa-solid fa-sun text-lg text-gold-500';
+            }
+        }
+
+        function toggleTheme() {
+            const isLight = document.body.classList.toggle('light');
+            const icon = document.getElementById('themeToggleIcon');
+
+            if (isLight) {
+                localStorage.setItem('abu_sahir_theme', 'light');
+                icon.className = 'fa-solid fa-moon text-lg text-slate-800';
+            } else {
+                localStorage.setItem('abu_sahir_theme', 'dark');
+                icon.className = 'fa-solid fa-sun text-lg text-gold-500';
+            }
+        }
+
+        // Admin Security & Access Handler
+        function handleAdminAuth(e) {
+            e.preventDefault();
+            const inputPass = document.getElementById('adminPassGateInput').value;
+            const errDiv = document.getElementById('adminAuthError');
+
+            if (inputPass === adminPass) {
+                isAdminLoggedIn = true;
+                errDiv.classList.add('hidden');
+                document.getElementById('dashSecurityGate').classList.add('hidden');
+                document.getElementById('dashProtectedContent').classList.remove('hidden');
+                document.getElementById('adminPassGateInput').value = '';
+            } else {
+                errDiv.classList.remove('hidden');
+            }
+        }
+
+        function lockAdminDashboard() {
+            isAdminLoggedIn = false;
+            document.getElementById('dashSecurityGate').classList.remove('hidden');
+            document.getElementById('dashProtectedContent').classList.add('hidden');
+        }
+
+        // Password Change Handler
+        function openChangePassModal() {
+            document.getElementById('changePassModal').classList.remove('hidden');
+            document.getElementById('changePassMsg').classList.add('hidden');
+        }
+
+        function closeChangePassModal() {
+            document.getElementById('changePassModal').classList.add('hidden');
+        }
+
+        function handleChangePassword(e) {
+            e.preventDefault();
+            const oldP = document.getElementById('oldPassInput').value;
+            const newP = document.getElementById('newPassInput').value;
+            const msg = document.getElementById('changePassMsg');
+
+            if (oldP !== adminPass) {
+                msg.textContent = "كلمة المرور الحالية غير صحيحة!";
+                msg.className = "text-xs text-center font-bold text-red-400";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            adminPass = newP;
+            localStorage.setItem('abu_sahir_admin_pass', newP);
+            msg.textContent = "تم تغيير كلمة المرور بنجاح!";
+            msg.className = "text-xs text-center font-bold text-emerald-400";
+            msg.classList.remove('hidden');
+
+            setTimeout(() => {
+                closeChangePassModal();
+                document.getElementById('oldPassInput').value = '';
+                document.getElementById('newPassInput').value = '';
+            }, 1200);
+        }
+
+        // User Profile & Authentication Modal
+        function toggleAuthModal() {
+            const modal = document.getElementById('authModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('authNameInput').value.trim();
+            if (name) {
+                currentUserName = name;
+                localStorage.setItem('abu_sahir_user_name', name);
+                updateUserUI();
+                toggleAuthModal();
+            }
+        }
+
+        function updateUserUI() {
+            document.getElementById('userBadgeName').textContent = currentUserName;
+            document.getElementById('authBtnText').textContent = currentUserName ? currentUserName : "تسجيل الدخول";
+            document.getElementById('userStatusWidget').classList.remove('hidden');
+        }
+
+        // Quick Notes Management
+        function loadQuickNotes() {
+            const notes = localStorage.getItem('abu_sahir_quick_notes') || '';
+            const textarea = document.getElementById('quickNotesArea');
+            if (textarea) textarea.value = notes;
+        }
+
+        function saveQuickNotes() {
+            const textarea = document.getElementById('quickNotesArea');
+            const status = document.getElementById('noteSaveStatus');
+            if (textarea) {
+                localStorage.setItem('abu_sahir_quick_notes', textarea.value);
+                if (status) {
+                    status.textContent = 'تم الحفظ...';
+                    setTimeout(() => { status.textContent = 'تخزين آمن'; }, 1000);
+                }
+            }
+        }
+
+        function clearQuickNotes() {
+            const textarea = document.getElementById('quickNotesArea');
+            if (textarea) {
+                textarea.value = '';
+                localStorage.removeItem('abu_sahir_quick_notes');
+            }
+        }
+
+        // Task Management Logic
+        function renderTasks() {
+            const container = document.getElementById('tasksList');
+            const counter = document.getElementById('taskCounter');
+
+            if (!container) return;
+            container.innerHTML = '';
+            
+            counter.textContent = `${tasksData.length} مهام`;
+
+            if (tasksData.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center py-4">لا يوجد مهام حالية.</p>`;
+                return;
+            }
+
+            tasksData.forEach(task => {
+                const item = document.createElement('div');
+                item.className = `flex items-center justify-between p-3 rounded-xl border transition-all ${
+                    task.completed 
+                    ? 'bg-slate-900/40 border-slate-800 text-slate-500 line-through' 
+                    : 'bg-slate-950 border-slate-800 text-slate-200'
+                }`;
+
+                item.innerHTML = `
+                    <div class="flex items-center gap-3 cursor-pointer" onclick="toggleTask(${task.id})">
+                        <i class="fa-regular ${task.completed ? 'fa-circle-check text-emerald-500' : 'fa-circle text-slate-600'} text-lg"></i>
+                        <span class="text-sm font-medium">${task.text}</span>
+                    </div>
+                    <button onclick="deleteTask(${task.id})" class="text-slate-500 hover:text-red-400 p-1 transition-colors">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function handleAddTask(e) {
+            e.preventDefault();
+            const input = document.getElementById('newTaskInput');
+            const text = input.value.trim();
+            if (text) {
+                tasksData.unshift({
+                    id: Date.now(),
+                    text: text,
+                    completed: false
+                });
+                input.value = '';
+                renderTasks();
+            }
+        }
+
+        function toggleTask(id) {
+            tasksData = tasksData.map(t => t.id === id ? { ...t, completed: !t.completed } : t);
+            renderTasks();
+        }
+
+        function deleteTask(id) {
+            tasksData = tasksData.filter(t => t.id !== id);
+            renderTasks();
+        }
+
+        // Article Management Logic
+        function renderArticles() {
+            const container = document.getElementById('articlesGrid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            articlesData.forEach(art => {
+                const card = document.createElement('div');
+                card.className = "glass-panel p-6 rounded-2xl border border-slate-800 flex flex-col justify-between hover:border-gold-500/40 transition-all duration-300";
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between text-xs text-gold-500 mb-3">
+                            <span class="bg-gold-500/10 border border-gold-500/30 px-2.5 py-1 rounded-md font-bold">${art.category}</span>
+                            <span class="text-slate-400">${art.date}</span>
+                        </div>
+                        <h3 class="text-lg font-bold font-tajawal text-slate-100 mb-2 leading-snug">${art.title}</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed line-clamp-3 mb-4">${art.content}</p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs">
+                        <span class="text-slate-500 font-semibold"><i class="fa-solid fa-user-pen ml-1"></i>${art.author}</span>
+                        <button onclick="deleteArticle(${art.id})" class="text-red-400 hover:text-red-300 transition-colors" title="حذف المقال">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openNewPostModal() {
+            document.getElementById('newPostModal').classList.remove('hidden');
+        }
+
+        function closeNewPostModal() {
+            document.getElementById('newPostModal').classList.add('hidden');
+        }
+
+        function handleAddArticle(e) {
+            e.preventDefault();
+            const title = document.getElementById('articleTitleInput').value.trim();
+            const category = document.getElementById('articleCategoryInput').value;
+            const content = document.getElementById('articleContentInput').value.trim();
+
+            if (title && content) {
+                const newArt = {
+                    id: Date.now(),
+                    title: title,
+                    category: category,
+                    date: new Date().toISOString().split('T')[0],
+                    author: currentUserName || "أبو ساهر الشافعي",
+                    content: content
+                };
+
+                articlesData.unshift(newArt);
+                renderArticles();
+                closeNewPostModal();
+
+                document.getElementById('articleTitleInput').value = '';
+                document.getElementById('articleContentInput').value = '';
+            }
+        }
+
+        function deleteArticle(id) {
+            articlesData = articlesData.filter(a => a.id !== id);
+            renderArticles();
+        }
+    </script>
 </body>
 </html>
