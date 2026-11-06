@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="المنصة الشخصية المعتمدة لأبو ساهر الشافعي - خبيـر الإدارة والتطوير المؤسسي والتخطيط الاستراتيجي.">
+    <meta name="author" content="أبو ساهر الشافعي">
+    <meta name="keywords" content="أبو ساهر الشافعي, الشافعي, التخطيط الاستراتيجي, القيادة, التطوير المؤسسي">
+    
+    <!-- Open Graph for Social Media Sharing -->
+    <meta property="og:title" content="أبو ساهر الشافعي | المنصة الشخصية ولوحة التحكم">
+    <meta property="og:description" content="موقع وتطبيقات أبو ساهر الشافعي في الإدارة والاستشارات والتطوير المؤسسي.">
+    <meta property="og:type" content="website">
+
+    <title>أبو ساهر الشافعي | المنصة الشخصية ولوحة التحكم</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Arabic (Cairo & Tajawal) -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- External Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            50: '#fffbf0',
+                            100: '#fff3c4',
+                            300: '#ffe07d',
+                            500: '#d4af37',
+                            600: '#b89228',
+                            700: '#94721c',
+                        },
+                        emeraldDark: '#0a1a17',
+                        navyDark: '#0b132b',
+                        cardDark: 'rgba(15, 23, 42, 0.75)',
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        tajawal: ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-navyDark text-slate-100 min-h-screen flex flex-col justify-between selection:bg-gold-500 selection:text-black custom-scrollbar">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-gold-500/20 px-4 lg:px-8 py-3 transition-all duration-300">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 space-x-reverse cursor-pointer" onclick="switchTab('home')">
+                <div class="w-11 h-11 rounded-full bg-gradient-to-tr from-gold-700 via-gold-500 to-amber-200 p-[2px] shadow-lg">
+                    <div class="w-full h-full bg-navyDark rounded-full flex items-center justify-center font-bold text-gold-500 text-xl font-tajawal overflow-hidden">
+                        <img src="assets/avatar.png" alt="أبو ساهر الشافعي" class="w-full h-full object-cover" onerror="this.remove(); this.parentElement.innerText='أ';">
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black tracking-wide font-tajawal text-slate-100 flex items-center gap-2">
+                        أبو ساهر الشافعي
+                        <i class="fa-solid fa-circle-check text-gold-500 text-xs" title="حساب موثق"></i>
+                    </h1>
+                    <p class="text-xs text-gold-500/80 font-medium">مستشار وشخصية قيادية</p>
+                </div>
+            </div>
+
+            <!-- Desktop Navigation Menu -->
+            <nav class="hidden md:flex items-center gap-1 bg-slate-900/60 p-1.5 rounded-full border border-slate-800">
+                <button onclick="switchTab('home')" id="nav-home" class="nav-link px-5 py-2 rounded-full text-sm font-semibold transition-all duration-200 bg-gold-500 text-slate-950 shadow-md">
+                    <i class="fa-solid fa-house ml-1.5"></i>الرئيسية
+                </button>
+                <button onclick="switchTab('bio')" id="nav-bio" class="nav-link px-5 py-2 rounded-full text-sm font-semibold text-slate-300 hover:text-gold-500 hover:bg-slate-800/60 transition-all duration-200">
+                    <i class="fa-solid fa-user-tie ml-1.5"></i>السيرة والخبرات
+                </button>
+                <button onclick="switchTab('articles')" id="nav-articles" class="nav-link px-5 py-2 rounded-full text-sm font-semibold text-slate-300 hover:text-gold-500 hover:bg-slate-800/60 transition-all duration-200">
+                    <i class="fa-solid fa-newspaper ml-1.5"></i>المقالات والأفكار
+                </button>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-link px-5 py-2 rounded-full text-sm font-semibold text-slate-300 hover:text-gold-500 hover:bg-slate-800/60 transition-all duration-200">
+                    <i class="fa-solid fa-lock ml-1.5 text-xs"></i>لوحة التحكم الخاصة
+                </button>
+            </nav>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-3">
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="p-2.5 rounded-full bg-slate-900/80 border border-gold-500/30 text-gold-500 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center w-10 h-10 shadow-md" title="تبديل المظهر">
+                    <i id="themeToggleIcon" class="fa-solid fa-sun text-lg"></i>
+                </button>
+
+                <div id="userStatusWidget" class="hidden md:flex items-center gap-3 bg-slate-900/80 border border-gold-500/30 py-1.5 px-3 rounded-full">
+                    <span id="userBadgeName" class="text-xs font-bold text-slate-200">الزائر الكريم</span>
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                
+                <button id="authModalBtn" onclick="toggleAuthModal()" class="px-4 py-2 bg-gradient-to-r from-gold-600 to-gold-500 text-slate-950 font-bold text-sm rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all duration-200 flex items-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span id="authBtnText">تسجيل الدخول</span>
+                </button>
+
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-300 hover:text-gold-500 p-2 text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden md:hidden mt-3 pt-3 border-t border-slate-800 space-y-2">
+            <button onclick="switchTab('home')" class="w-full text-right px-4 py-2.5 rounded-lg text-slate-200 hover:bg-gold-500/10 hover:text-gold-500 font-semibold flex items-center gap-2">
+                <i class="fa-solid fa-house w-6 text-gold-500"></i> الرئيسية
+            </button>
+            <button onclick="switchTab('bio')" class="w-full text-right px-4 py-2.5 rounded-lg text-slate-200 hover:bg-gold-500/10 hover:text-gold-500 font-semibold flex items-center gap-2">
+                <i class="fa-solid fa-user-tie w-6 text-gold-500"></i> السيرة والخبرات
+            </button>
+            <button onclick="switchTab('articles')" class="w-full text-right px-4 py-2.5 rounded-lg text-slate-200 hover:bg-gold-500/10 hover:text-gold-500 font-semibold flex items-center gap-2">
+                <i class="fa-solid fa-newspaper w-6 text-gold-500"></i> المقالات
+            </button>
+            <button onclick="switchTab('dashboard')" class="w-full text-right px-4 py-2.5 rounded-lg text-slate-200 hover:bg-gold-500/10 hover:text-gold-500 font-semibold flex items-center gap-2">
+                <i class="fa-solid fa-gauge-high w-6 text-gold-500"></i> لوحة التحكم
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- SECTION 1: HOME -->
+        <section id="section-home" class="tab-section space-y-12">
+            <div class="relative overflow-hidden rounded-3xl glass-panel p-8 lg:p-14 gold-border-glow flex flex-col lg:flex-row items-center justify-between gap-10">
+                <div class="space-y-6 max-w-2xl relative z-10 text-center lg:text-right">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-500 text-xs font-bold">
+                        <i class="fa-solid fa-crown text-xs"></i>
+                        <span>المنصة الرسمية المعتمدة</span>
+                    </div>
+                    
+                    <h1 class="text-4xl lg:text-6xl font-black tracking-tight leading-tight font-tajawal">
+                        أهلاً بكم في عالم <br>
+                        <span class="gold-gradient-text">أبو ساهر الشافعي</span>
+                    </h1>
+                    
+                    <p class="text-slate-300 text-base lg:text-lg leading-relaxed font-light">
+                        منصة شاملة تجمع بين الرؤية القيادية، الإدارة الاستراتيجية، وإثراء المحتوى الفكري والتطوير الذاتي. نرحب بكم لتصفح الخبرات، التواصل المباشر، والاستفادة من لوحة الخدمات والتطبيقات الخاصة.
+                    </p>
+
+                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-2">
+                        <button onclick="switchTab('dashboard')" class="px-6 py-3.5 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl shadow-xl hover:shadow-gold-500/20 hover:scale-105 active:scale-95 transition-all duration-200">
+                            <i class="fa-solid fa-bolt ml-2"></i> دخول لوحة التحكم
+                        </button>
+                        <button onclick="switchTab('bio')" class="px-6 py-3.5 bg-slate-900/90 border border-gold-500/30 text-gold-500 hover:bg-gold-500/10 font-bold rounded-xl transition-all duration-200">
+                            <i class="fa-solid fa-address-card ml-2"></i> استعراض السيرة الذاتية
+                        </button>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="w-64 h-64 lg:w-80 lg:h-80 rounded-3xl bg-gradient-to-tr from-gold-600 via-amber-500 to-emerald-600 p-1.5 shadow-2xl transform group-hover:rotate-1 transition-all duration-500">
+                        <div class="w-full h-full bg-slate-950 rounded-[22px] overflow-hidden relative flex flex-col items-center justify-center p-6 text-center">
+                            <img src="assets/profile-hero.jpg" alt="صورة أبو ساهر الشافعي" class="absolute inset-0 w-full h-full object-cover opacity-30" onerror="this.style.display='none';">
+                            <div class="w-28 h-28 rounded-full bg-slate-900 border-2 border-gold-500 flex items-center justify-center text-6xl text-gold-500 mb-4 shadow-inner relative z-10">
+                                <i class="fa-solid fa-user-shield"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold font-tajawal text-slate-100 relative z-10">أبو ساهر الشافعي</h3>
+                            <p class="text-gold-500 text-xs font-semibold mt-1 relative z-10">قيادي & مستشار تطوير أعمال</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: BIO -->
+        <section id="section-bio" class="tab-section hidden space-y-8">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <h2 class="text-3xl font-black font-tajawal gold-gradient-text">السيرة الذاتية والخبرات</h2>
+            </div>
+            <div id="bioContentContainer" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Bio loaded via script.js -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: ARTICLES -->
+        <section id="section-articles" class="tab-section hidden space-y-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                <div>
+                    <h2 class="text-3xl font-black font-tajawal gold-gradient-text">مدونة أفكار الشافعي</h2>
+                    <p class="text-slate-400 text-sm mt-1">مقالات ورؤى في القيادة والتطوير</p>
+                </div>
+                <button onclick="openNewPostModal()" class="px-5 py-2.5 bg-gold-500 text-slate-950 font-bold rounded-xl text-sm flex items-center gap-2 shadow-lg hover:bg-gold-600 transition-all">
+                    <i class="fa-solid fa-pen-to-square"></i> إضافة مقال جديد
+                </button>
+            </div>
+            <div id="articlesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <!-- SECTION 4: DASHBOARD (ADMIN DASHBOARD WITH FULL CRUD) -->
+        <section id="section-dashboard" class="tab-section hidden space-y-8">
+            <div id="dashSecurityGate" class="glass-panel p-8 rounded-3xl border border-gold-500/30 max-w-xl mx-auto text-center space-y-6 shadow-2xl my-12">
+                <div class="w-20 h-20 rounded-full bg-gold-500/10 text-gold-500 border border-gold-500/30 flex items-center justify-center text-3xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black font-tajawal text-slate-100">منطقة المشرف المحمية</h3>
+                    <p class="text-slate-400 text-sm mt-2">يرجى إدخال كلمة مرور المشرف للوصول إلى لوحة التحكم والتعديل</p>
+                </div>
+
+                <form onsubmit="handleAdminAuth(event)" class="space-y-4 max-w-sm mx-auto text-right">
+                    <div>
+                        <input type="password" id="adminPassGateInput" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none transition-all">
+                    </div>
+                    <div id="adminAuthError" class="hidden text-xs text-red-400 font-semibold text-center">
+                        <i class="fa-solid fa-triangle-exclamation ml-1"></i> كلمة المرور غير صحيحة!
+                    </div>
+                    <button type="submit" class="w-full py-3 bg-gradient-to-r from-gold-500 to-amber-600 text-slate-950 font-bold rounded-xl shadow-lg hover:brightness-110 active:scale-95 transition-all text-sm">
+                        <i class="fa-solid fa-key ml-2"></i> تأكيد الهوية والدخول
+                    </button>
+                </form>
+            </div>
+
+            <!-- Protected Admin View -->
+            <div id="dashProtectedContent" class="hidden space-y-8">
+                <div class="glass-panel p-6 rounded-2xl border border-gold-500/30 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-gold-500 to-amber-700 flex items-center justify-center text-2xl text-slate-950 font-black shadow-lg">
+                            <i class="fa-solid fa-user-gear"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold font-tajawal text-slate-100">لوحة الشافعي لإدارة المحتوى الإداري (CRUD)</h2>
+                            <p class="text-slate-400 text-sm">إمكانية إضافة، تعديل، وحذف المقالات والمهام والخبرات بسهولة.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button onclick="openChangePassModal()" class="px-4 py-2 bg-slate-800 border border-gold-500/30 text-gold-500 font-bold text-xs rounded-xl hover:bg-slate-700 transition-all">
+                            <i class="fa-solid fa-key ml-1"></i> تغيير كلمة المرور
+                        </button>
+                        <button onclick="lockAdminDashboard()" class="px-3 py-2 bg-red-500/10 text-red-400 border border-red-500/30 font-bold text-xs rounded-xl hover:bg-red-500/20 transition-all">
+                            <i class="fa-solid fa-lock ml-1"></i> قفل
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Admin Tasks & Content Controls -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Tasks Management -->
+                    <div class="lg:col-span-2 glass-panel p-6 rounded-2xl border border-slate-800 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                            <h3 class="text-lg font-bold font-tajawal text-gold-500 flex items-center gap-2">
+                                <i class="fa-solid fa-list-check"></i> إدارة المهام والتكليفات
+                            </h3>
+                            <span id="taskCounter" class="text-xs bg-slate-800 text-slate-300 px-2.5 py-1 rounded-lg">0 مهام</span>
+                        </div>
+                        <form onsubmit="handleAddTask(event)" class="flex gap-2">
+                            <input type="text" id="newTaskInput" placeholder="أدخل مهمة جديدة..." required class="flex-grow bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                            <button type="submit" class="px-5 py-3 bg-gold-500 text-slate-950 font-bold rounded-xl text-sm hover:bg-gold-600 transition-all">
+                                <i class="fa-solid fa-plus"></i> إضافة
+                            </button>
+                        </form>
+                        <div id="tasksList" class="space-y-2.5 max-h-[350px] overflow-y-auto custom-scrollbar pt-2"></div>
+                    </div>
+
+                    <!-- Personal Quick Notes Widget -->
+                    <div class="glass-panel p-6 rounded-2xl border border-slate-800 space-y-4 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                                <h3 class="text-lg font-bold font-tajawal text-gold-500 flex items-center gap-2">
+                                    <i class="fa-solid fa-sticky-note"></i> المفكرة السريعة
+                                </h3>
+                                <span class="text-[10px] text-slate-400">حفظ تلقائي</span>
+                            </div>
+                            <textarea id="quickNotesArea" oninput="saveQuickNotes()" placeholder="اكتب ملاحظاتك..." class="w-full h-48 bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-200 text-sm rounded-xl p-4 outline-none resize-none custom-scrollbar"></textarea>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-800/60">
+                            <span id="noteSaveStatus">تخزين آمن</span>
+                            <button onclick="clearQuickNotes()" class="hover:text-red-400">مسح</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modals -->
+    <!-- AUTH MODAL -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md p-8 rounded-3xl border border-gold-500/30 relative shadow-2xl">
+            <button onclick="toggleAuthModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-2xl font-bold font-tajawal text-slate-100 text-center mb-4">تسجيل الدخول / التوثيق</h3>
+            <form onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <input type="text" id="authNameInput" required placeholder="أدخل اسمك هنا..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                <button type="submit" class="w-full py-3 bg-gold-500 text-slate-950 text-sm font-bold rounded-xl hover:bg-gold-600 transition-all">حفظ ومتابعة</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- NEW / EDIT ARTICLE MODAL -->
+    <div id="newPostModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg p-8 rounded-3xl border border-gold-500/30 relative shadow-2xl">
+            <button onclick="closeNewPostModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="modalArticleTitle" class="text-2xl font-bold font-tajawal text-slate-100 text-center mb-4">إضافة / تعديل مقال</h3>
+            <form onsubmit="handleSaveArticle(event)" class="space-y-4">
+                <input type="hidden" id="articleEditId">
+                <div>
+                    <label class="block text-xs text-slate-300 font-bold mb-1">عنوان المقال</label>
+                    <input type="text" id="articleTitleInput" required placeholder="مثال: التخطيط المستقبلي..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 font-bold mb-1">التصنيف</label>
+                    <select id="articleCategoryInput" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                        <option value="التخطيط الاستراتيجي">التخطيط الاستراتيجي</option>
+                        <option value="القيادة والإدارة">القيادة والإدارة</option>
+                        <option value="تطوير الذات">تطوير الذات</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs text-slate-300 font-bold mb-1">المحتوى</label>
+                    <textarea id="articleContentInput" required rows="4" placeholder="اكتب تفاصيل المقال..." class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl p-4 outline-none resize-none custom-scrollbar"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeNewPostModal()" class="px-5 py-2.5 bg-slate-800 text-slate-300 text-sm font-bold rounded-xl">إلغاء</button>
+                    <button type="submit" class="px-6 py-2.5 bg-gold-500 text-slate-950 text-sm font-bold rounded-xl hover:bg-gold-600 transition-all">حفظ المقال</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- CHANGE PASS MODAL -->
+    <div id="changePassModal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md p-8 rounded-3xl border border-gold-500/30 relative shadow-2xl">
+            <button onclick="closeChangePassModal()" class="absolute top-5 left-5 text-slate-400 hover:text-gold-500 text-xl"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-2xl font-bold font-tajawal text-slate-100 text-center mb-4">تغيير كلمة المرور</h3>
+            <form onsubmit="handleChangePassword(event)" class="space-y-4">
+                <input type="password" id="oldPassInput" required placeholder="كلمة المرور الحالية" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                <input type="password" id="newPassInput" required placeholder="كلمة المرور الجديدة" class="w-full bg-slate-950 border border-slate-800 focus:border-gold-500 text-slate-100 text-sm rounded-xl px-4 py-3 outline-none">
+                <div id="changePassMsg" class="hidden text-xs text-center font-bold"></div>
+                <button type="submit" class="w-full py-3 bg-gold-500 text-slate-950 font-bold text-sm rounded-xl hover:bg-gold-600">تحديث كلمة المرور</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="glass-panel border-t border-slate-800/80 py-6 px-4 mt-12 text-center text-xs text-slate-400">
+        <p>© <span id="currentYear"></span> جميع الحقوق محفوظة لـ <strong class="text-gold-500 font-bold">أبو ساهر الشافعي</strong></p>
+    </footer>
+
+    <!-- External Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
